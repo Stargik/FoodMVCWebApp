@@ -1,4 +1,7 @@
-﻿namespace FoodMVCWebApp;
+﻿using FoodMVCWebApp.Data;
+using Microsoft.EntityFrameworkCore;
+
+namespace FoodMVCWebApp;
 
 public class Program
 {
@@ -8,6 +11,10 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddControllersWithViews();
+
+        builder.Services.AddDbContext<FoodDbContext>(option =>
+            option.UseSqlServer(builder.Configuration.GetConnectionString(SettingStrings.FoodDbConnection))
+        );
 
         var app = builder.Build();
 
@@ -29,6 +36,8 @@ public class Program
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
+
+        app.MigrateDatabase();
 
         app.Run();
     }
