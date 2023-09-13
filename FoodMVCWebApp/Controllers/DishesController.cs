@@ -7,22 +7,29 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FoodMVCWebApp.Data;
 using FoodMVCWebApp.Entities;
+using FoodMVCWebApp.Models;
+using FoodMVCWebApp.Interfaces;
+using Microsoft.Extensions.Options;
 
 namespace FoodMVCWebApp.Controllers
 {
     public class DishesController : Controller
     {
         private readonly FoodDbContext _context;
-
-        public DishesController(FoodDbContext context)
+        private readonly IImageService imageService;
+        private readonly StaticFilesSettings imgSettings;
+        public DishesController(FoodDbContext context, IImageService imageService, IOptions<StaticFilesSettings> imgSettings)
         {
             _context = context;
+            this.imageService = imageService;
+            this.imgSettings = imgSettings.Value;
         }
 
         // GET: Dishes
         public async Task<IActionResult> Index()
         {
-            var foodDbContext = _context.Dishes.Include(d => d.Category).Include(d => d.DifficultyLevel);
+            ViewData["ImageStoragePath"] = "~/" + imgSettings.Path;
+            var foodDbContext = _context.Dishes.Include(d => d.Category).Include(d => d.CuisineCountryType).Include(d => d.DifficultyLevel);
             return View(await foodDbContext.ToListAsync());
         }
 
@@ -33,9 +40,10 @@ namespace FoodMVCWebApp.Controllers
             {
                 return NotFound();
             }
-
+            ViewData["ImageStoragePath"] = "~/" + imgSettings.Path;
             var dish = await _context.Dishes
                 .Include(d => d.Category)
+                .Include(d => d.CuisineCountryType)
                 .Include(d => d.DifficultyLevel)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (dish == null)
@@ -49,8 +57,9 @@ namespace FoodMVCWebApp.Controllers
         // GET: Dishes/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id");
-            ViewData["DifficultyLevelId"] = new SelectList(_context.DifficultyLevels, "Id", "Id");
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Title");
+            ViewData["CuisineCountryTypeId"] = new SelectList(_context.CuisineCountryTypes, "Id", "Name");
+            ViewData["DifficultyLevelId"] = new SelectList(_context.DifficultyLevels, "Id", "Name");
             return View();
         }
 
@@ -59,17 +68,39 @@ namespace FoodMVCWebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Recipe,Image,CategoryId,DifficultyLevelId,CuisineCountryTypelId")] Dish dish)
+        public async Task<IActionResult> Create([Bind("Id,Title,Recipe,Image,CategoryId,DifficultyLevelId,CuisineCountryTypeId")] DishDTO dishDTO)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(dish);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    Dish dish = new Dish
+                    {
+                        Id = dishDTO.Id,
+                        Title = dishDTO.Title,
+                        Recipe = dishDTO.Recipe,
+                        Image = dishDTO.Image.FileName,
+                        CategoryId = dishDTO.CategoryId,
+                        DifficultyLevelId = dishDTO.DifficultyLevelId,
+                        CuisineCountryTypeId = dishDTO.CuisineCountryTypeId
+                    };
+
+                    await imageService.Upload(dishDTO.Image);
+                    _context.Add(dish);
+                    await _context.SaveChangesAsync();
+                    
+                    return RedirectToAction(nameof(Index));
+                }
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", dish.CategoryId);
-            ViewData["DifficultyLevelId"] = new SelectList(_context.DifficultyLevels, "Id", "Id", dish.DifficultyLevelId);
-            return View(dish);
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("Image", ex.Message);
+            }
+            
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Title", dishDTO.CategoryId);
+            ViewData["CuisineCountryTypeId"] = new SelectList(_context.CuisineCountryTypes, "Id", "Name", dishDTO.CuisineCountryTypeId);
+            ViewData["DifficultyLevelId"] = new SelectList(_context.DifficultyLevels, "Id", "Name", dishDTO.DifficultyLevelId);
+            return View(dishDTO);
         }
 
         // GET: Dishes/Edit/5
@@ -85,8 +116,10 @@ namespace FoodMVCWebApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", dish.CategoryId);
-            ViewData["DifficultyLevelId"] = new SelectList(_context.DifficultyLevels, "Id", "Id", dish.DifficultyLevelId);
+            ViewData["ImageStoragePath"] = "~/" + imgSettings.Path;
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Title", dish.CategoryId);
+            ViewData["CuisineCountryTypeId"] = new SelectList(_context.CuisineCountryTypes, "Id", "Name", dish.CuisineCountryTypeId);
+            ViewData["DifficultyLevelId"] = new SelectList(_context.DifficultyLevels, "Id", "Name", dish.DifficultyLevelId);
             return View(dish);
         }
 
@@ -95,9 +128,9 @@ namespace FoodMVCWebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Recipe,Image,CategoryId,DifficultyLevelId,CuisineCountryTypelId")] Dish dish)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Recipe,Image,CategoryId,DifficultyLevelId,CuisineCountryTypeId")] DishDTO dishDTO)
         {
-            if (id != dish.Id)
+            if (id != dishDTO.Id)
             {
                 return NotFound();
             }
@@ -106,12 +139,24 @@ namespace FoodMVCWebApp.Controllers
             {
                 try
                 {
+                    Dish dish = new Dish
+                    {
+                        Id = dishDTO.Id,
+                        Title = dishDTO.Title,
+                        Recipe = dishDTO.Recipe,
+                        Image = dishDTO.Image.FileName,
+                        CategoryId = dishDTO.CategoryId,
+                        DifficultyLevelId = dishDTO.DifficultyLevelId,
+                        CuisineCountryTypeId = dishDTO.CuisineCountryTypeId
+                    };
+
+                    await imageService.Upload(dishDTO.Image);
                     _context.Update(dish);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DishExists(dish.Id))
+                    if (!DishExists(dishDTO.Id))
                     {
                         return NotFound();
                     }
@@ -120,11 +165,16 @@ namespace FoodMVCWebApp.Controllers
                         throw;
                     }
                 }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("Image", ex.Message);
+                }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", dish.CategoryId);
-            ViewData["DifficultyLevelId"] = new SelectList(_context.DifficultyLevels, "Id", "Id", dish.DifficultyLevelId);
-            return View(dish);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Title", dishDTO.CategoryId);
+            ViewData["CuisineCountryTypeId"] = new SelectList(_context.CuisineCountryTypes, "Id", "Name", dishDTO.CuisineCountryTypeId);
+            ViewData["DifficultyLevelId"] = new SelectList(_context.DifficultyLevels, "Id", "Name", dishDTO.DifficultyLevelId);
+            return View(dishDTO);
         }
 
         // GET: Dishes/Delete/5
@@ -137,6 +187,7 @@ namespace FoodMVCWebApp.Controllers
 
             var dish = await _context.Dishes
                 .Include(d => d.Category)
+                .Include(d => d.CuisineCountryType)
                 .Include(d => d.DifficultyLevel)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (dish == null)

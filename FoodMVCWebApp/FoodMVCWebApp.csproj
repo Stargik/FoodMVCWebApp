@@ -26,10 +26,18 @@
     <None Remove="Entities\" />
     <None Remove="Data\" />
     <None Remove="Configuration\" />
+    <None Remove="Interfaces\" />
+    <None Remove="Services\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Entities\" />
     <Folder Include="Data\" />
     <Folder Include="Configuration\" />
+    <Folder Include="Interfaces\" />
+    <Folder Include="Services\" />
+    <Folder Include="wwwroot\Images\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\Images\" />
   </ItemGroup>
 </Project>

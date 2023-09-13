@@ -22,13 +22,13 @@
                 @Html.DisplayNameFor(model => model.Image)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CuisineCountryTypelId)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Category)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.DifficultyLevel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CuisineCountryType)
             </th>
             <th></th>
         </tr>
@@ -43,16 +43,16 @@
                 @Html.DisplayFor(modelItem => item.Recipe)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Image)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CuisineCountryTypelId)
+                <img style="max-width: 100px;" src="@(ViewData["ImageStoragePath"] + "/" + item.Image)" asp-append-version="true">
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Category.Id)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DifficultyLevel.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CuisineCountryType.Id)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

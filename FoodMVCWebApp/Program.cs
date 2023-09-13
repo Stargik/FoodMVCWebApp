@@ -1,4 +1,6 @@
 ﻿using FoodMVCWebApp.Data;
+using FoodMVCWebApp.Interfaces;
+using FoodMVCWebApp.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace FoodMVCWebApp;
@@ -15,6 +17,9 @@ public class Program
         builder.Services.AddDbContext<FoodDbContext>(option =>
             option.UseSqlServer(builder.Configuration.GetConnectionString(SettingStrings.FoodDbConnection))
         );
+
+        builder.Services.Configure<StaticFilesSettings>(builder.Configuration.GetSection(SettingStrings.StaticFilesSection));
+        builder.Services.AddTransient<IImageService, FilesystemImageService>();
 
         var app = builder.Build();
 
