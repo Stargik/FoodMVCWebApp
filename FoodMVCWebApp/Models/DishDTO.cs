@@ -10,6 +10,7 @@ namespace FoodMVCWebApp.Models
         public string Title { get; set; }
         public string Recipe { get; set; }
         public IFormFile? Image { get; set; }
+        [Display(Name = "Category")]
         public int CategoryId { get; set; }
         [Display(Name = "Difficulty level")]
         public int DifficultyLevelId { get; set; }

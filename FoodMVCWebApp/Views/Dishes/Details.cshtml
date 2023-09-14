@@ -6,6 +6,7 @@
 
 <h1>@Html.DisplayFor(model => model.Title)</h1>
 <p><img style="max-height: 200px;" src="@(ViewData["ImageStoragePath"] + "/" + Model.Image)" asp-append-version="true"></p>
+<p class="card-text">@Html.DisplayNameFor(model => model.Category): @Html.DisplayFor(modelItem => modelItem.Category.Title)</p>
 <p>@Html.DisplayNameFor(model => model.DifficultyLevel): @Html.DisplayFor(modelItem => modelItem.DifficultyLevel.Name)</p>
 <p>@Html.DisplayNameFor(model => model.CuisineCountryType): @Html.DisplayFor(modelItem => modelItem.CuisineCountryType.Name)</p>
 <h4>@Html.DisplayNameFor(model => model.Recipe)</h4>

@@ -17,6 +17,7 @@
                     </div>
                     <div class="card-body p-2 pb-3">
                         <p><img style="max-height: 100px;" src="@(ViewData["ImageStoragePath"] + "/" + item.Image)" asp-append-version="true"></p>
+                        <p class="card-text">@Html.DisplayNameFor(model => model.Category): @Html.DisplayFor(modelItem => item.Category.Title)</p>
                         <p class="card-text">@Html.DisplayNameFor(model => model.DifficultyLevel): @Html.DisplayFor(modelItem => item.DifficultyLevel.Name)</p>
                         <p class="card-text">@Html.DisplayNameFor(model => model.CuisineCountryType): @Html.DisplayFor(modelItem => item.CuisineCountryType.Name)</p>
                         <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-dark btn-sm">Details</a>
