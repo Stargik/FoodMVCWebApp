@@ -42,9 +42,9 @@ namespace FoodMVCWebApp.Controllers
                 return NotFound();
             }
 
-            return View(category);
-        }
+            return RedirectToAction("Index", "Dishes", new { id = category.Id });
 
+        }
         // GET: Categories/Create
         public IActionResult Create()
         {

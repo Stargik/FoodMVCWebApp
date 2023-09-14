@@ -2,6 +2,7 @@
 using Azure.Core;
 using FoodMVCWebApp.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -39,6 +40,16 @@ namespace FoodMVCWebApp.Services
         {
             string directoryPath = appEnvironment.WebRootPath + "/" + imgSettings.Path;
             return directoryPath;
+        }
+
+        public async Task<IFormFile> Download(string imgName)
+        {
+            string directoryPath = appEnvironment.WebRootPath + "/" + imgSettings.Path;
+            string fullPath = directoryPath + "/" + imgName;
+            using (var stream = new FileStream(fullPath, FileMode.Open))
+            {
+                return new FormFile(stream, 0, stream.Length, imgName, imgName);
+            }
         }
     }
 }

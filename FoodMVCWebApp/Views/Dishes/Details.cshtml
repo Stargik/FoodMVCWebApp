@@ -4,50 +4,13 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>@Html.DisplayFor(model => model.Title)</h1>
+<p><img style="max-height: 200px;" src="@(ViewData["ImageStoragePath"] + "/" + Model.Image)" asp-append-version="true"></p>
+<p>@Html.DisplayNameFor(model => model.DifficultyLevel): @Html.DisplayFor(modelItem => modelItem.DifficultyLevel.Name)</p>
+<p>@Html.DisplayNameFor(model => model.CuisineCountryType): @Html.DisplayFor(modelItem => modelItem.CuisineCountryType.Name)</p>
+<h4>@Html.DisplayNameFor(model => model.Recipe)</h4>
+<p>@Html.DisplayFor(model => model.Recipe)</p>
 
-<div>
-    <h4>Dish</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Recipe)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Recipe)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Image)
-        </dt>
-        <dd class = "col-sm-10">
-            <img style="max-width: 200px;" src="@(ViewData["ImageStoragePath"] + "/" + Model.Image)" asp-append-version="true">
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Category)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Category.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DifficultyLevel)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DifficultyLevel.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CuisineCountryType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CuisineCountryType.Id)
-        </dd>
-    </dl>
-</div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>

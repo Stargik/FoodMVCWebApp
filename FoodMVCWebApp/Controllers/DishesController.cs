@@ -26,11 +26,23 @@ namespace FoodMVCWebApp.Controllers
         }
 
         // GET: Dishes
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id, int? countryId)
         {
             ViewData["ImageStoragePath"] = "~/" + imgSettings.Path;
             var foodDbContext = _context.Dishes.Include(d => d.Category).Include(d => d.CuisineCountryType).Include(d => d.DifficultyLevel);
-            return View(await foodDbContext.ToListAsync());
+            var food = await foodDbContext.ToListAsync();
+            if (id is not null)
+            {
+                ViewBag.CategoryId = id;
+                food = food.Where(c => c.CategoryId == id).ToList();
+            }
+            if (countryId is not null)
+            {
+                ViewBag.CuisineCountryTypeId = id;
+                food = food.Where(c => c.CuisineCountryTypeId == countryId).ToList();
+            }
+
+            return View(food);
         }
 
         // GET: Dishes/Details/5
@@ -88,7 +100,7 @@ namespace FoodMVCWebApp.Controllers
                     await imageService.Upload(dishDTO.Image);
                     _context.Add(dish);
                     await _context.SaveChangesAsync();
-                    
+
                     return RedirectToAction(nameof(Index));
                 }
             }
@@ -96,7 +108,7 @@ namespace FoodMVCWebApp.Controllers
             {
                 ModelState.AddModelError("Image", ex.Message);
             }
-            
+
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Title", dishDTO.CategoryId);
             ViewData["CuisineCountryTypeId"] = new SelectList(_context.CuisineCountryTypes, "Id", "Name", dishDTO.CuisineCountryTypeId);
             ViewData["DifficultyLevelId"] = new SelectList(_context.DifficultyLevels, "Id", "Name", dishDTO.DifficultyLevelId);
@@ -116,11 +128,20 @@ namespace FoodMVCWebApp.Controllers
             {
                 return NotFound();
             }
+            DishDTO dishDTO = new DishDTO
+            {
+                Id = dish.Id,
+                Title = dish.Title,
+                Recipe = dish.Recipe,
+                CategoryId = dish.CategoryId,
+                DifficultyLevelId = dish.DifficultyLevelId,
+                CuisineCountryTypeId = dish.CuisineCountryTypeId
+            };
             ViewData["ImageStoragePath"] = "~/" + imgSettings.Path;
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Title", dish.CategoryId);
-            ViewData["CuisineCountryTypeId"] = new SelectList(_context.CuisineCountryTypes, "Id", "Name", dish.CuisineCountryTypeId);
-            ViewData["DifficultyLevelId"] = new SelectList(_context.DifficultyLevels, "Id", "Name", dish.DifficultyLevelId);
-            return View(dish);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Title", dishDTO.CategoryId);
+            ViewData["CuisineCountryTypeId"] = new SelectList(_context.CuisineCountryTypes, "Id", "Name", dishDTO.CuisineCountryTypeId);
+            ViewData["DifficultyLevelId"] = new SelectList(_context.DifficultyLevels, "Id", "Name", dishDTO.DifficultyLevelId);
+            return View(dishDTO);
         }
 
         // POST: Dishes/Edit/5
@@ -135,46 +156,46 @@ namespace FoodMVCWebApp.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
+                Dish dish = new Dish
                 {
-                    Dish dish = new Dish
-                    {
-                        Id = dishDTO.Id,
-                        Title = dishDTO.Title,
-                        Recipe = dishDTO.Recipe,
-                        Image = dishDTO.Image.FileName,
-                        CategoryId = dishDTO.CategoryId,
-                        DifficultyLevelId = dishDTO.DifficultyLevelId,
-                        CuisineCountryTypeId = dishDTO.CuisineCountryTypeId
-                    };
-
+                    Id = dishDTO.Id,
+                    Title = dishDTO.Title,
+                    Recipe = dishDTO.Recipe,
+                    Image = dishDTO.Image?.FileName,
+                    CategoryId = dishDTO.CategoryId,
+                    DifficultyLevelId = dishDTO.DifficultyLevelId,
+                    CuisineCountryTypeId = dishDTO.CuisineCountryTypeId
+                };
+                if (dishDTO.Image is null)
+                {
+                    dish.Image = (await _context.Dishes.AsNoTracking().FirstOrDefaultAsync(dish => dish.Id == dishDTO.Id)).Image;
+                }
+                if (dishDTO.Image is not null)
+                {
                     await imageService.Upload(dishDTO.Image);
-                    _context.Update(dish);
-                    await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DishExists(dishDTO.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("Image", ex.Message);
-                }
-                return RedirectToAction(nameof(Index));
+
+                _context.Update(dish);
+                await _context.SaveChangesAsync();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Title", dishDTO.CategoryId);
-            ViewData["CuisineCountryTypeId"] = new SelectList(_context.CuisineCountryTypes, "Id", "Name", dishDTO.CuisineCountryTypeId);
-            ViewData["DifficultyLevelId"] = new SelectList(_context.DifficultyLevels, "Id", "Name", dishDTO.DifficultyLevelId);
-            return View(dishDTO);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!DishExists(dishDTO.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("Image", ex.Message);
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Dishes/Delete/5
@@ -212,14 +233,14 @@ namespace FoodMVCWebApp.Controllers
             {
                 _context.Dishes.Remove(dish);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool DishExists(int id)
         {
-          return (_context.Dishes?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Dishes?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

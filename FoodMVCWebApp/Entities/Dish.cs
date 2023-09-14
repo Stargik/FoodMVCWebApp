@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+
 namespace FoodMVCWebApp.Entities
 {
 	public class Dish
@@ -12,7 +14,9 @@ namespace FoodMVCWebApp.Entities
         public int CuisineCountryTypeId { get; set; }
 
         public Category Category { get; set; } = null!;
+        [Display(Name = "Difficulty level")]
         public DifficultyLevel DifficultyLevel { get; set; } = null!;
+        [Display(Name = "Cuisine country")]
         public CuisineCountryType CuisineCountryType { get; set; } = null!;
     }
 }

@@ -42,7 +42,7 @@ namespace FoodMVCWebApp.Controllers
                 return NotFound();
             }
 
-            return View(cuisineCountryType);
+            return RedirectToAction("Index", "Dishes", new { countryId = cuisineCountryType.Id });
         }
 
         // GET: CuisineCountryTypes/Create
