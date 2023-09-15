@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+  foodmvcwebapp:
+    image: ${DOCKER_REGISTRY-}foodmvcwebapp
+    build:
+      context: .
+      dockerfile: FoodMVCWebApp/Dockerfile
+    depends_on:
+      - sqlserver
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ConnectionStrings__FoodDbConnection=Data Source=sqlserver;Initial Catalog=FoodDb;User ID=sa;Password=P@ssword;TrustServerCertificate=True; 
+    ports:
+      - "7661:80"
+      - "7761:443"
+
+  sqlserver:
+    image: mcr.microsoft.com/azure-sql-edge:latest
+    hostname: sqlserver
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: P@ssword
+    ports:
+      - "1433:1433"
