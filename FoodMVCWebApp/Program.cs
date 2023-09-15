@@ -1,7 +1,10 @@
-﻿using FoodMVCWebApp.Data;
+using FoodMVCWebApp.Data;
 using FoodMVCWebApp.Interfaces;
 using FoodMVCWebApp.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using FoodMVCWebApp.Areas.Identity.Data;
+using FoodMVCWebApp.Areas.Identity.Data;
 
 namespace FoodMVCWebApp;
 
@@ -17,6 +20,12 @@ public class Program
         builder.Services.AddDbContext<FoodDbContext>(option =>
             option.UseSqlServer(builder.Configuration.GetConnectionString(SettingStrings.FoodDbConnection))
         );
+
+        builder.Services.AddDbContext<FoodMVCWebAppIdentityDbContext>(options => options.UseSqlServer(
+            builder.Configuration.GetConnectionString(SettingStrings.IdentityFoodDbConnection)
+        ));
+
+        builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<FoodMVCWebAppIdentityDbContext>();
 
         builder.Services.Configure<StaticFilesSettings>(builder.Configuration.GetSection(SettingStrings.StaticFilesSection));
         builder.Services.AddTransient<IImageService, FilesystemImageService>();
@@ -43,7 +52,8 @@ public class Program
             pattern: "{controller=Home}/{action=Index}/{id?}");
 
         app.MigrateDatabase();
-
+        app.MigrateIdentityDatabase();
+        app.MapRazorPages();
         app.Run();
     }
 }
