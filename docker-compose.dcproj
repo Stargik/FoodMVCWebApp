@@ -3,7 +3,7 @@
   <PropertyGroup Label="Globals">
     <ProjectVersion>2.1</ProjectVersion>
     <DockerTargetOS>Linux</DockerTargetOS>
-    <ProjectGuid>{FA05C3A8-C6C8-448C-9416-8F58B70BB96C}</ProjectGuid>
+    <ProjectGuid>{52DA9ED9-30CD-4A3E-A820-C0F6F66AC275}</ProjectGuid>
     <DockerLaunchBrowser>True</DockerLaunchBrowser>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}</DockerServiceUrl>
     <DockerServiceName>foodmvcwebapp</DockerServiceName>

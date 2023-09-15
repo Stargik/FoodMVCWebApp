@@ -10,6 +10,7 @@ using FoodMVCWebApp.Entities;
 using FoodMVCWebApp.Models;
 using FoodMVCWebApp.Interfaces;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FoodMVCWebApp.Controllers
 {
@@ -67,6 +68,7 @@ namespace FoodMVCWebApp.Controllers
         }
 
         // GET: Dishes/Create
+        [Authorize]
         public IActionResult Create()
         {
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Title");
@@ -80,6 +82,7 @@ namespace FoodMVCWebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("Id,Title,Recipe,Image,CategoryId,DifficultyLevelId,CuisineCountryTypeId")] DishDTO dishDTO)
         {
             try
@@ -116,6 +119,7 @@ namespace FoodMVCWebApp.Controllers
         }
 
         // GET: Dishes/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Dishes == null)
@@ -149,6 +153,7 @@ namespace FoodMVCWebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Recipe,Image,CategoryId,DifficultyLevelId,CuisineCountryTypeId")] DishDTO dishDTO)
         {
             if (id != dishDTO.Id)
@@ -199,6 +204,7 @@ namespace FoodMVCWebApp.Controllers
         }
 
         // GET: Dishes/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Dishes == null)
@@ -222,6 +228,7 @@ namespace FoodMVCWebApp.Controllers
         // POST: Dishes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Dishes == null)

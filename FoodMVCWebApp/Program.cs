@@ -13,7 +13,6 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
         // Add services to the container.
         builder.Services.AddControllersWithViews();
 
@@ -25,7 +24,14 @@ public class Program
             builder.Configuration.GetConnectionString(SettingStrings.IdentityFoodDbConnection)
         ));
 
-        builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<FoodMVCWebAppIdentityDbContext>();
+        builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<FoodMVCWebAppIdentityDbContext>();
+
+        builder.Services.AddAuthentication().AddGoogle(googleOptions =>
+        {
+            googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+            googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+        });
+
 
         builder.Services.Configure<StaticFilesSettings>(builder.Configuration.GetSection(SettingStrings.StaticFilesSection));
         builder.Services.AddTransient<IImageService, FilesystemImageService>();
@@ -45,7 +51,11 @@ public class Program
 
         app.UseRouting();
 
+
+
+        app.UseAuthentication();
         app.UseAuthorization();
+
 
         app.MapControllerRoute(
             name: "default",

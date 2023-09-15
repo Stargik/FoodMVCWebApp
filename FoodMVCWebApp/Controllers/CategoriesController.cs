@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FoodMVCWebApp.Data;
 using FoodMVCWebApp.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FoodMVCWebApp.Controllers
 {
@@ -46,6 +47,7 @@ namespace FoodMVCWebApp.Controllers
 
         }
         // GET: Categories/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -56,6 +58,7 @@ namespace FoodMVCWebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("Id,Title,Description")] Category category)
         {
             if (ModelState.IsValid)
@@ -68,6 +71,7 @@ namespace FoodMVCWebApp.Controllers
         }
 
         // GET: Categories/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Categories == null)
@@ -88,6 +92,7 @@ namespace FoodMVCWebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description")] Category category)
         {
             if (id != category.Id)
@@ -119,6 +124,7 @@ namespace FoodMVCWebApp.Controllers
         }
 
         // GET: Categories/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Categories == null)
@@ -139,6 +145,7 @@ namespace FoodMVCWebApp.Controllers
         // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Categories == null)
