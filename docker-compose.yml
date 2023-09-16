@@ -11,8 +11,6 @@ services:
       - ASPNETCORE_URLS=https://+:443;http://+:80
       - ConnectionStrings__FoodDbConnection=Data Source=sqlserver;Initial Catalog=FoodDb;User ID=sa;Password=P@ssword;TrustServerCertificate=True;
       - ConnectionStrings__IdentityFoodDbConnection=Data Source=sqlserver;Initial Catalog=IdentityFoodDb;User ID=sa;Password=P@ssword;TrustServerCertificate=True;MultipleActiveResultSets=true;
-      - Authentication__Google__ClientId=1081416413039-um70qhvfpa8bif3jbh9fs88s5spfqhp0.apps.googleusercontent.com
-      - Authentication__Google__ClientSecret=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
     ports:
       - "7661:80"
       - "7761:443"
