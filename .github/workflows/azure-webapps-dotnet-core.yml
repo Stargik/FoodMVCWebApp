@@ -32,7 +32,7 @@ jobs:
         run: dotnet build -c Release ${{ env.AZURE_WEBAPP_PACKAGE_PATH }} --no-restore
 
       - name: Test app
-        run: dotnet test -c Release ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}.Tests --no-build
+        run: dotnet test --no-restore --verbosity normal
 
       - name: dotnet publish
         run: dotnet publish -c Release ${{ env.AZURE_WEBAPP_PACKAGE_PATH }} -o ${{env.DOTNET_ROOT}}/package
