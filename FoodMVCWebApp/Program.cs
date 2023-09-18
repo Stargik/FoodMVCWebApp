@@ -4,7 +4,6 @@ using FoodMVCWebApp.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using FoodMVCWebApp.Areas.Identity.Data;
-using FoodMVCWebApp.Areas.Identity.Data;
 
 namespace FoodMVCWebApp;
 
@@ -34,7 +33,9 @@ public class Program
 
 
         builder.Services.Configure<StaticFilesSettings>(builder.Configuration.GetSection(SettingStrings.StaticFilesSection));
-        builder.Services.AddTransient<IImageService, FilesystemImageService>();
+        builder.Services.Configure<BlobStaticFilesSettings>(builder.Configuration.GetSection(SettingStrings.AzureBlobStorageSection));
+
+        builder.Services.AddTransient<IImageService, BlobStorageImageService>();
 
         var app = builder.Build();
 

@@ -19,6 +19,7 @@ namespace FoodMVCWebApp.Controllers
         private readonly FoodDbContext _context;
         private readonly IImageService imageService;
         private readonly StaticFilesSettings imgSettings;
+        private readonly BlobStaticFilesSettings blobStaticFilesSettings;
         public DishesController(FoodDbContext context, IImageService imageService, IOptions<StaticFilesSettings> imgSettings)
         {
             _context = context;
@@ -29,7 +30,7 @@ namespace FoodMVCWebApp.Controllers
         // GET: Dishes
         public async Task<IActionResult> Index(int? id, int? countryId)
         {
-            ViewData["ImageStoragePath"] = "~/" + imgSettings.Path;
+            ViewData["ImageStoragePath"] = await imageService.GetStoragePath();
             var foodDbContext = _context.Dishes.Include(d => d.Category).Include(d => d.CuisineCountryType).Include(d => d.DifficultyLevel);
             var food = await foodDbContext.ToListAsync();
             if (id is not null)
@@ -53,7 +54,7 @@ namespace FoodMVCWebApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["ImageStoragePath"] = "~/" + imgSettings.Path;
+            ViewData["ImageStoragePath"] = await imageService.GetStoragePath();
             var dish = await _context.Dishes
                 .Include(d => d.Category)
                 .Include(d => d.CuisineCountryType)
@@ -141,7 +142,7 @@ namespace FoodMVCWebApp.Controllers
                 DifficultyLevelId = dish.DifficultyLevelId,
                 CuisineCountryTypeId = dish.CuisineCountryTypeId
             };
-            ViewData["ImageStoragePath"] = "~/" + imgSettings.Path;
+            ViewData["ImageStoragePath"] = await imageService.GetStoragePath();
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Title", dishDTO.CategoryId);
             ViewData["CuisineCountryTypeId"] = new SelectList(_context.CuisineCountryTypes, "Id", "Name", dishDTO.CuisineCountryTypeId);
             ViewData["DifficultyLevelId"] = new SelectList(_context.DifficultyLevels, "Id", "Name", dishDTO.DifficultyLevelId);
