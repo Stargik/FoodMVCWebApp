@@ -36,6 +36,7 @@
     <None Remove="Interfaces\" />
     <None Remove="Services\" />
     <None Remove="Areas\Identity\Configuration\" />
+    <None Remove="Views\AdditionalInfo\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Entities\" />
@@ -45,6 +46,7 @@
     <Folder Include="Services\" />
     <Folder Include="wwwroot\Images\" />
     <Folder Include="Areas\Identity\Configuration\" />
+    <Folder Include="Views\AdditionalInfo\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\Images\" />

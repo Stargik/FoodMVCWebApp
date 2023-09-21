@@ -7,6 +7,7 @@ namespace FoodMVCWebApp
         public const string IdentityFoodDbConnection = "IdentityFoodDbConnection";
         public const string StaticFilesSection = "StaticFilesSection";
         public const string AzureBlobStorageSection = "AzureBlobStorageSection";
+        public const string GoogleMaps = "GoogleMaps";
     }
 }
 
