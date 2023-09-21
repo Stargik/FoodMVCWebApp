@@ -4,6 +4,8 @@ using FoodMVCWebApp.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using FoodMVCWebApp.Areas.Identity.Data;
+using FoodMVCWebApp.Clients;
+using Microsoft.AspNetCore.Authentication.Google;
 
 namespace FoodMVCWebApp;
 
@@ -31,6 +33,10 @@ public class Program
             googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
         });
 
+        builder.Services.AddHttpClient<AddressesClient>(client =>
+        {
+            client.BaseAddress = new Uri(builder.Configuration["Clients:Adresses"]);
+        });
 
         builder.Services.Configure<StaticFilesSettings>(builder.Configuration.GetSection(SettingStrings.StaticFilesSection));
         builder.Services.Configure<BlobStaticFilesSettings>(builder.Configuration.GetSection(SettingStrings.AzureBlobStorageSection));
