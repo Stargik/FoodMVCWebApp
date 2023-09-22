@@ -7,12 +7,31 @@
     <p>Food recipes</p>
 </div>
 
-<div id="googleMapContainer" style="width: 500px; height: 500px">
+
+
+
+
+
+<div class="container ">
+    <div class="row text-center">
+        <div class="col mb-6">
+            <div id="googleMapContainer" style="width: 500px; height: 500px">
+            </div>
+        </div>
+        <div class="col mb-6">
+            <div>
+                <canvas id="myChart"></canvas>
+            </div>
+        </div>
+    </div>
 </div>
+
+
+
 @section scripts{
+
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=@ViewData["ApiKey"]"></script>
-    <script type="text/javascript">
-        $.ajax({
+    <script type="text/javascript">$.ajax({
             url: '/api/Maps/JsonAddressList',
             type: 'GET',
             success: function (data) {
@@ -27,7 +46,9 @@
                 })
                 createMap(addresses);
             }
-        });
-</script>
+        });</script>
 
-    }
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript">createChart();</script>
+
+}
