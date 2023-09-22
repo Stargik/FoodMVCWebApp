@@ -38,7 +38,7 @@ public class Program
         builder.Services.AddSingleton(serviceProvider =>
         {
             var mongoDbSettings = builder.Configuration.GetSection("MongoDbSettings").Get<MongoDbSettings>();
-            var mongoClient = new MongoClient(mongoDbSettings.ConnectionStrng);
+            var mongoClient = new MongoClient(mongoDbSettings.ConnectionString);
             var projectSettings = builder.Configuration.GetSection("ProjectSettings").Get<ProjectSettings>();
             return mongoClient.GetDatabase(projectSettings.ProjectName);
         });
