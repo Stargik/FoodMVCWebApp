@@ -28,6 +28,11 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.10" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.18.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.5.0" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.1.0" />
+    <PackageReference Include="MassTransit.AspNetCore" Version="7.3.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.21.0" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Entities\" />
@@ -38,6 +43,7 @@
     <None Remove="Areas\Identity\Configuration\" />
     <None Remove="Views\AdditionalInfo\" />
     <None Remove="Clients\" />
+    <None Remove="Consumers\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Entities\" />
@@ -49,6 +55,7 @@
     <Folder Include="Areas\Identity\Configuration\" />
     <Folder Include="Views\AdditionalInfo\" />
     <Folder Include="Clients\" />
+    <Folder Include="Consumers\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\Images\" />

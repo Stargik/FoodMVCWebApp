@@ -10,20 +10,22 @@ namespace FoodMVCWebApp.Services
 	{
         private readonly GoogleMapsSettings mapsSettings;
         private readonly AddressesClient addressesClient;
+        private readonly IAddressRepository addressRepository;
 
-        public GoogleMapsService(IOptions<GoogleMapsSettings> mapsSettings, AddressesClient addressesClient)
+        public GoogleMapsService(IOptions<GoogleMapsSettings> mapsSettings, AddressesClient addressesClient, IAddressRepository addressRepository)
 		{
 			this.mapsSettings = mapsSettings.Value;
             this.addressesClient = addressesClient;
+            this.addressRepository = addressRepository;
 		}
 
         public async Task<IEnumerable<AddressDTO>> GetAddresses()
         {
-            var addressList = await addressesClient.GetAddressesAsync();
+            var addressList = await addressRepository.GetAllAsync();
             return addressList;
         }
 
-        public async Task<string> GetKKey()
+        public async Task<string> GetKey()
         {
             return mapsSettings.ApiKey;
         }

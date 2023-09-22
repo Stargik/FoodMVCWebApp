@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Identity;
 using FoodMVCWebApp.Areas.Identity.Data;
 using FoodMVCWebApp.Clients;
 using Microsoft.AspNetCore.Authentication.Google;
+using MassTransit;
+using System.Reflection;
+using MongoDB.Driver;
 
 namespace FoodMVCWebApp;
 
@@ -25,6 +28,23 @@ public class Program
             builder.Configuration.GetConnectionString(SettingStrings.IdentityFoodDbConnection)
         ));
 
+        builder.Services.Configure<StaticFilesSettings>(builder.Configuration.GetSection(SettingStrings.StaticFilesSection));
+        builder.Services.Configure<BlobStaticFilesSettings>(builder.Configuration.GetSection(SettingStrings.AzureBlobStorageSection));
+        builder.Services.Configure<GoogleMapsSettings>(builder.Configuration.GetSection(SettingStrings.GoogleMaps));
+
+        builder.Services.AddTransient<IImageService, BlobStorageImageService>();
+        builder.Services.AddTransient<IMapsService, GoogleMapsService>();
+
+        builder.Services.AddSingleton(serviceProvider =>
+        {
+            var mongoDbSettings = builder.Configuration.GetSection("MongoDbSettings").Get<MongoDbSettings>();
+            var mongoClient = new MongoClient(mongoDbSettings.ConnectionStrng);
+            var projectSettings = builder.Configuration.GetSection("ProjectSettings").Get<ProjectSettings>();
+            return mongoClient.GetDatabase(projectSettings.ProjectName);
+        });
+
+        builder.Services.AddSingleton<IAddressRepository, AddressRepository>();
+
         builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<FoodMVCWebAppIdentityDbContext>();
 
         builder.Services.AddAuthentication().AddGoogle(googleOptions =>
@@ -35,15 +55,27 @@ public class Program
 
         builder.Services.AddHttpClient<AddressesClient>(client =>
         {
-            client.BaseAddress = new Uri(builder.Configuration["Clients:Adresses"]);
+            client.BaseAddress = new Uri(builder.Configuration["Clients:Addresses"]);
         });
 
-        builder.Services.Configure<StaticFilesSettings>(builder.Configuration.GetSection(SettingStrings.StaticFilesSection));
-        builder.Services.Configure<BlobStaticFilesSettings>(builder.Configuration.GetSection(SettingStrings.AzureBlobStorageSection));
-        builder.Services.Configure<GoogleMapsSettings>(builder.Configuration.GetSection(SettingStrings.GoogleMaps));
+        builder.Services.AddMassTransit(x =>
+        {
+            x.AddConsumers(Assembly.GetEntryAssembly());
 
-        builder.Services.AddTransient<IImageService, BlobStorageImageService>();
-        builder.Services.AddTransient<IMapsService, GoogleMapsService>();
+            x.UsingRabbitMq((context, configurator) =>
+            {
+                var rabbitMQSettings = builder.Configuration.GetSection("RabbitMQSettings").Get<RabbitMQSettings>();
+                var projectSettings = builder.Configuration.GetSection("ProjectSettings").Get<ProjectSettings>();
+                configurator.Host(rabbitMQSettings.Host, (cfg) =>
+                {
+                    cfg.Username(rabbitMQSettings.User);
+                    cfg.Password(rabbitMQSettings.Password);
+                });
+                configurator.ConfigureEndpoints(context, new KebabCaseEndpointNameFormatter(false));
+            });
+        });
+
+
 
         var app = builder.Build();
 

@@ -16,7 +16,7 @@ namespace FoodMVCWebApp.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            ViewData["ApiKey"] = await mapsService.GetKKey();
+            ViewData["ApiKey"] = await mapsService.GetKey();
             return View();
         }
     }

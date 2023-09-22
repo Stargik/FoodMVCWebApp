@@ -5,7 +5,7 @@ namespace FoodMVCWebApp.Interfaces
 {
 	public interface IMapsService
 	{
-        public Task<string> GetKKey();
+        public Task<string> GetKey();
         public Task<IEnumerable<AddressDTO>> GetAddresses();
     }
 }
