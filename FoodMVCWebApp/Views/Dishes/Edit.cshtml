@@ -28,21 +28,28 @@
                 <input asp-for="Image" class="form-control" />
                 <span asp-validation-for="Image" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
-                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+                <label for="CategoryName" class="control-label">@Html.DisplayNameFor(model => model.CategoryId)</label>
+                <input type="text" id="CategoryName" class="form-control" value="@ViewData["CategoryTitle"]" />
+                <input type="hidden" asp-for="CategoryId" />
                 <span asp-validation-for="CategoryId" class="text-danger"></span>
             </div>
+         
             <div class="form-group">
-                <label asp-for="DifficultyLevelId" class="control-label"></label>
-                <select asp-for="DifficultyLevelId" class="form-control" asp-items="ViewBag.DifficultyLevelId"></select>
+                <label for="DifficultyLevelName" class="control-label">@Html.DisplayNameFor(model => model.DifficultyLevelId)</label>
+                <input type="text" id="DifficultyLevelName" class="form-control" value="@ViewData["DifficultyLevelName"]" />
+                <input type="hidden" asp-for="DifficultyLevelId" />
                 <span asp-validation-for="DifficultyLevelId" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="CuisineCountryTypeId" class="control-label"></label>
-                <select asp-for="CuisineCountryTypeId" class="form-control" asp-items="ViewBag.CuisineCountryTypeId"></select>
+                <label for="CuisineCountryTypeName" class="control-label">@Html.DisplayNameFor(model => model.CuisineCountryTypeId)</label>
+                <input type="text" id="CuisineCountryTypeName" class="form-control" value="@ViewData["CuisineCountryTypeName"]" />
+                <input type="hidden" asp-for="CuisineCountryTypeId" />
                 <span asp-validation-for="CuisineCountryTypeId" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
@@ -56,4 +63,10 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script>$(document).ready(function () {
+            CategoryAutocomplete();
+            DifficultyLevelAutocomplete();
+            CuisineCountryTypeAutocomplete();
+        })</script>
 }

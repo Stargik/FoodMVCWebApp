@@ -142,6 +142,9 @@ namespace FoodMVCWebApp.Controllers
                 DifficultyLevelId = dish.DifficultyLevelId,
                 CuisineCountryTypeId = dish.CuisineCountryTypeId
             };
+            ViewData["CategoryTitle"] = (await _context.Categories.FirstOrDefaultAsync(c => c.Id == dishDTO.CategoryId)).Title;
+            ViewData["CuisineCountryTypeName"] = (await _context.CuisineCountryTypes.FirstOrDefaultAsync(c => c.Id == dishDTO.CuisineCountryTypeId)).Name;
+            ViewData["DifficultyLevelName"] = (await _context.DifficultyLevels.FirstOrDefaultAsync(c => c.Id == dishDTO.DifficultyLevelId)).Name;
             ViewData["ImageStoragePath"] = await imageService.GetStoragePath();
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Title", dishDTO.CategoryId);
             ViewData["CuisineCountryTypeId"] = new SelectList(_context.CuisineCountryTypes, "Id", "Name", dishDTO.CuisineCountryTypeId);
@@ -244,6 +247,27 @@ namespace FoodMVCWebApp.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetCategoryTitles(string term)
+        {
+            var categoryTitles = await _context.Categories.Where(c => c.Title.Contains(term)).Select(c => new { c.Id, c.Title }).ToListAsync();
+            return Json(categoryTitles);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetDifficultyLevelsNames(string term)
+        {
+            var levelsNames = await _context.DifficultyLevels.Where(c => c.Name.Contains(term)).Select(c => new { c.Id, c.Name }).ToListAsync();
+            return Json(levelsNames);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetCuisineCountryTypesNames(string term)
+        {
+            var countryNames = await _context.CuisineCountryTypes.Where(c => c.Name.Contains(term)).Select(c => new { c.Id, c.Name }).ToListAsync();
+            return Json(countryNames);
         }
 
         private bool DishExists(int id)

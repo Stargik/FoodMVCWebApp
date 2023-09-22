@@ -93,3 +93,78 @@ function createChart() {
         }
     });
 }
+
+function CategoryAutocomplete() {
+    $("#CategoryName").autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: "/Dishes/GetCategoryTitles",
+                type: "POST",
+                dataType: "json",
+                data: { term: request.term },
+                success: function (data) {
+                    response($.map(data, function (item) {
+                        return { label: item.title, val: item.id };
+                    }))
+
+                }
+            })
+        },
+        select: function (e, i) {
+            console.log(i.item.val);
+            $("#CategoryId").val(i.item.val);
+        },
+        delay: 500,
+        minLength: 3
+    });
+}
+
+function DifficultyLevelAutocomplete() {
+    $("#DifficultyLevelName").autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: "/Dishes/GetDifficultyLevelsNames",
+                type: "POST",
+                dataType: "json",
+                data: { term: request.term },
+                success: function (data) {
+                    response($.map(data, function (item) {
+                        return { label: item.name, val: item.id };
+                    }))
+
+                }
+            })
+        },
+        select: function (e, i) {
+            console.log(i.item.val);
+            $("#DifficultyLevelId").val(i.item.val);
+        },
+        delay: 500,
+        minLength: 3
+    });
+}
+
+function CuisineCountryTypeAutocomplete() {
+    $("#CuisineCountryTypeName").autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: "/Dishes/GetCuisineCountryTypesNames",
+                type: "POST",
+                dataType: "json",
+                data: { term: request.term },
+                success: function (data) {
+                    response($.map(data, function (item) {
+                        return { label: item.name, val: item.id };
+                    }))
+
+                }
+            })
+        },
+        select: function (e, i) {
+            console.log(i.item.val);
+            $("#CuisineCountryTypeId").val(i.item.val);
+        },
+        delay: 500,
+        minLength: 3
+    });
+}
