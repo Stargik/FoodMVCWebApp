@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FoodMVCWebApp.Interfaces;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Drive.v3;
+using Google.Apis.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoodMVCWebApp.Controllers
@@ -19,5 +22,6 @@ namespace FoodMVCWebApp.Controllers
             ViewData["ApiKey"] = await mapsService.GetKey();
             return View();
         }
+
     }
 }

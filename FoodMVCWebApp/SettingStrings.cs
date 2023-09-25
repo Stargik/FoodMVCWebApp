@@ -8,6 +8,7 @@ namespace FoodMVCWebApp
         public const string StaticFilesSection = "StaticFilesSection";
         public const string AzureBlobStorageSection = "AzureBlobStorageSection";
         public const string GoogleMaps = "GoogleMaps";
+        public const string GoogleSheets = "GoogleSheets";
     }
 }
 

@@ -11,6 +11,7 @@ using FoodMVCWebApp.Models;
 using FoodMVCWebApp.Interfaces;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authorization;
+using Google.Apis.Sheets.v4;
 
 namespace FoodMVCWebApp.Controllers
 {
@@ -20,11 +21,13 @@ namespace FoodMVCWebApp.Controllers
         private readonly IImageService imageService;
         private readonly StaticFilesSettings imgSettings;
         private readonly BlobStaticFilesSettings blobStaticFilesSettings;
-        public DishesController(FoodDbContext context, IImageService imageService, IOptions<StaticFilesSettings> imgSettings)
+        private readonly IGoogleSheetsService googleSheetsService;
+        public DishesController(FoodDbContext context, IImageService imageService, IOptions<StaticFilesSettings> imgSettings, IGoogleSheetsService googleSheetsService)
         {
             _context = context;
             this.imageService = imageService;
             this.imgSettings = imgSettings.Value;
+            this.googleSheetsService = googleSheetsService;
         }
 
         // GET: Dishes
@@ -102,8 +105,9 @@ namespace FoodMVCWebApp.Controllers
                     };
 
                     await imageService.Upload(dishDTO.Image);
-                    _context.Add(dish);
+                    var result = _context.Add(dish);
                     await _context.SaveChangesAsync();
+                    await googleSheetsService.AddDish(result.Entity);
 
                     return RedirectToAction(nameof(Index));
                 }
