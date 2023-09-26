@@ -32,6 +32,7 @@ public class Program
         builder.Services.Configure<BlobStaticFilesSettings>(builder.Configuration.GetSection(SettingStrings.AzureBlobStorageSection));
         builder.Services.Configure<GoogleMapsSettings>(builder.Configuration.GetSection(SettingStrings.GoogleMaps));
         builder.Services.Configure<GoogleSheetsSettings>(builder.Configuration.GetSection(SettingStrings.GoogleSheets));
+        builder.Services.Configure<GoogleSheetsSecretSettings>(builder.Configuration.GetSection(SettingStrings.GoogleSheetsSecrets));
         builder.Services.AddSingleton(typeof(GoogleSheetsHelper));
 
         builder.Services.AddTransient<IImageService, BlobStorageImageService>();

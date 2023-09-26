@@ -1,17 +1,20 @@
 ﻿using System;
+using System.Text.Json;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
+using Microsoft.Extensions.Options;
 
 namespace FoodMVCWebApp
 {
 	public class GoogleSheetsHelper
 	{
         public SheetsService Service { get; set; }
-        const string APPLICATION_NAME = "FoodMVCWebApp";
+        private readonly GoogleSheetsSecretSettings googleSheetsSecretSettings;
         static readonly string[] Scopes = { SheetsService.Scope.Spreadsheets };
-        public GoogleSheetsHelper()
+        public GoogleSheetsHelper(IOptions<GoogleSheetsSecretSettings> googleSheetsSecretSettings)
         {
+            this.googleSheetsSecretSettings = googleSheetsSecretSettings.Value;
             InitializeService();
         }
         private void InitializeService()
@@ -20,16 +23,13 @@ namespace FoodMVCWebApp
             Service = new SheetsService(new BaseClientService.Initializer()
             {
                 HttpClientInitializer = credential,
-                ApplicationName = APPLICATION_NAME
+                ApplicationName = googleSheetsSecretSettings.ProjectId
             });
         }
         private GoogleCredential GetCredentialsFromFile()
         {
-            GoogleCredential credential;
-            using (var stream = new FileStream("client_secrets.json", FileMode.Open, FileAccess.Read))
-            {
-                credential = GoogleCredential.FromStream(stream).CreateScoped(Scopes);
-            }
+            var googleSheetsSecretSettingsJson = JsonSerializer.Serialize(googleSheetsSecretSettings);
+            GoogleCredential credential = GoogleCredential.FromJson(googleSheetsSecretSettingsJson).CreateScoped(Scopes);
             return credential;
         }
     }
